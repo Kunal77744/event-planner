@@ -1,6 +1,9 @@
 const form = document.getElementById("plan-form");
 const out = document.getElementById("result");
 const status = document.getElementById("status");
+let lastReq = null;
+const chat = document.getElementById("chat-form");
+const chatLog = document.getElementById("chat-log");
 const inr = new Intl.NumberFormat("en-IN");
 
 function el(tag, text, cls) {
@@ -62,7 +65,22 @@ form.addEventListener("submit", async e => {
       const msg = Array.isArray(data.detail) ? data.detail.map(x => x.msg).join("; ") : data.detail;
       status.textContent = "Could not build plan: " + msg; return;
     }
-    status.textContent = "Plan ready."; render(data);
+    lastReq = d; status.textContent = "Plan ready."; render(data); chat.hidden = false;
   } catch { status.textContent = "Network error. Please try again."; }
 });
 document.getElementById("event_date").min = new Date(Date.now() + 864e5).toISOString().slice(0, 10);
+
+chat.addEventListener("submit", async e => {
+  e.preventDefault();
+  const input = document.getElementById("chat-msg");
+  chatLog.textContent = "Updating...";
+  try {
+    const r = await fetch("/api/refine", { method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ plan: lastReq, message: input.value }) });
+    const data = await r.json();
+    if (!r.ok) { chatLog.textContent = typeof data.detail === "string" ? data.detail : "Could not apply that change."; return; }
+    lastReq = data.request; render(data);
+    chatLog.textContent = "Updated: " + data.changes.join("; ");
+    input.value = "";
+  } catch { chatLog.textContent = "Network error. Please try again."; }
+});

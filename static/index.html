@@ -47,6 +47,14 @@ td:last-child,th:last-child{text-align:right}caption{text-align:left;color:var(-
   <div class="full"><button type="submit">Build my plan</button></div>
 </form>
 <p id="status" role="status" aria-live="polite"></p>
+<form id="chat-form" hidden aria-labelledby="chat-h">
+  <h2 id="chat-h" class="full">Refine your plan</h2>
+  <div class="full"><label for="chat-msg">Tell the assistant what to change</label>
+    <input id="chat-msg" maxlength="300" placeholder="Example: reduce budget by 20%, or make it 150 guests" required>
+    <p class="hint">Try a budget or guest change, or a preference like "outdoor, vegetarian menu".</p></div>
+  <div class="full"><button type="submit">Update plan</button></div>
+</form>
+<p id="chat-log" role="status" aria-live="polite"></p>
 <div id="result" tabindex="-1" aria-label="Your event plan"></div>
 </main>
 <script src="/static/app.js"></script>
