@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Celebration &amp; Event Planner</title>
+<style>
+:root{--bg:#fbf8f3;--fg:#1f2430;--muted:#555b6a;--card:#fff;--line:#d9d2c5;--accent:#0f5c5c;--accent-fg:#fff;--warn:#7a3b00;--warnbg:#fff1dd}
+@media (prefers-color-scheme:dark){:root{--bg:#14181f;--fg:#eef0f4;--muted:#b3b9c6;--card:#1c222c;--line:#3a4252;--accent:#6fd1c8;--accent-fg:#0b1a19;--warn:#ffd9a8;--warnbg:#3b2a12}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:1.0625rem/1.6 Georgia,"Times New Roman",serif}
+.skip{position:absolute;left:-999px}.skip:focus{left:1rem;top:1rem;background:var(--card);padding:.5rem;z-index:9}
+main{max-width:62rem;margin:0 auto;padding:1.5rem 1rem 4rem}
+h1{font-size:2rem;margin:.5rem 0}h2{margin-top:2rem}
+form{background:var(--card);border:1px solid var(--line);padding:1.25rem;display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(14rem,1fr))}
+.full{grid-column:1/-1}
+label{display:block;font-weight:700;margin-bottom:.25rem}
+input,select,textarea,button{font:inherit;color:inherit;width:100%;padding:.6rem;border:2px solid var(--line);background:var(--bg);border-radius:4px}
+button{background:var(--accent);color:var(--accent-fg);border-color:var(--accent);font-weight:700;cursor:pointer;width:auto;padding:.7rem 1.4rem}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.hint{color:var(--muted);font-size:.9rem;margin:.2rem 0 0}
+.warn{background:var(--warnbg);color:var(--warn);padding:.6rem .8rem;border-left:4px solid var(--warn)}
+.muted{color:var(--muted)}
+.scroll{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{border-bottom:1px solid var(--line);padding:.5rem;text-align:left}
+td:last-child,th:last-child{text-align:right}caption{text-align:left;color:var(--muted);padding:.4rem 0}
+.checks{list-style:none;padding:0}.checks li{display:flex;gap:.6rem;align-items:center}.checks input{width:1.3rem;height:1.3rem}.checks label{margin:0;font-weight:400}
+#result:focus{outline:none}
+@media print{form,.skip,button{display:none}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<a class="skip" href="#result">Skip to plan</a>
+<main>
+<h1>Celebration &amp; Event Planner</h1>
+<p>Tell us about your event. You get a budget split, a dated timeline, a vendor checklist and ideas shaped to your notes.</p>
+<form id="plan-form">
+  <div><label for="event_type">Event type</label>
+    <select id="event_type" name="event_type" required><option value="wedding">Wedding</option><option value="birthday">Birthday</option><option value="community">Community event</option></select></div>
+  <div><label for="guests">Number of guests</label><input id="guests" name="guests" type="number" min="1" max="5000" value="100" required></div>
+  <div><label for="budget">Total budget (Rs)</label><input id="budget" name="budget" type="number" min="5000" step="1000" value="500000" required></div>
+  <div><label for="city">City</label><input id="city" name="city" maxlength="60" value="Indore" required></div>
+  <div><label for="event_date">Event date</label><input id="event_date" name="event_date" type="date" required></div>
+  <div class="full"><label for="preferences">Preferences (optional)</label>
+    <textarea id="preferences" name="preferences" rows="3" maxlength="500" aria-describedby="pref-hint"></textarea>
+    <p class="hint" id="pref-hint">Theme, food, culture, kids, outdoor or indoor. Up to 500 characters.</p></div>
+  <div class="full"><button type="submit">Build my plan</button></div>
+</form>
+<p id="status" role="status" aria-live="polite"></p>
+<div id="result" tabindex="-1" aria-label="Your event plan"></div>
+</main>
+<script src="/static/app.js"></script>
+</body>
+</html>
