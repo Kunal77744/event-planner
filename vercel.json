@@ -1,8 +1,14 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
+    {
+      "source": "/public/(.*)",
+      "destination": "/$1"
+    }
+  ],
   "headers": [
     {
-      "source": "/(.*)",
+      "source": "/(index\\.html|app\\.js|public/.*)?",
       "headers": [
         {
           "key": "X-Content-Type-Options",

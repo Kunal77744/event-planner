@@ -48,3 +48,14 @@ def test_rate_limit():
 def test_security_headers_and_health():
     r = client.get("/api/health")
     assert r.json() == {"status": "ok"} and r.headers["X-Content-Type-Options"] == "nosniff"
+
+
+def test_root_index_and_static_app():
+    r_index = client.get("/")
+    assert r_index.status_code == 200
+    assert "Celebration &amp; Event Planner" in r_index.text
+
+    r_js = client.get("/public/app.js")
+    assert r_js.status_code == 200
+    assert "plan-form" in r_js.text
+
