@@ -80,19 +80,24 @@ def health() -> dict:
 
 
 @app.get("/")
-def index() -> FileResponse:
-    return FileResponse(PUBLIC / "index.html")
+def index():
+    p = PUBLIC / "index.html"
+    return FileResponse(p) if p.exists() else {"status": "ok"}
 
 
 @app.get("/index.html")
-def index_html() -> FileResponse:
-    return FileResponse(PUBLIC / "index.html")
+def index_html():
+    p = PUBLIC / "index.html"
+    return FileResponse(p) if p.exists() else {"status": "ok"}
 
 
 @app.get("/app.js")
-def app_js() -> FileResponse:
-    return FileResponse(PUBLIC / "app.js")
+def app_js():
+    p = PUBLIC / "app.js"
+    return FileResponse(p) if p.exists() else {"status": "ok"}
 
 
-app.mount("/public", StaticFiles(directory=PUBLIC), name="public")
+if PUBLIC.is_dir():
+    app.mount("/public", StaticFiles(directory=PUBLIC), name="public")
+
 
