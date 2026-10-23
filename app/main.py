@@ -17,7 +17,7 @@ from .refine import apply_message  # noqa: E402
 from .schemas import PlanRequest  # noqa: E402
 
 PUBLIC = Path(__file__).resolve().parent.parent / "public"
-app = FastAPI(title="Celebration & Event Planner")
+app = FastAPI(title="Celebration & Event Planner", redirect_slashes=False)
 
 RATE_LIMIT, WINDOW = 20, 60  # requests per window (seconds) per client
 _hits: dict[str, deque] = defaultdict(deque)
@@ -43,6 +43,7 @@ async def security_headers(request: Request, call_next):
 
 
 @app.post("/api/plan")
+@app.post("/api/plan/")
 def create_plan(req: PlanRequest, request: Request) -> dict:
     _check_rate(request.client.host if request.client else "unknown")
     plan = build_plan(req.event_type, req.guests, req.budget, req.event_date)
@@ -57,6 +58,7 @@ class RefineRequest(BaseModel):
 
 
 @app.post("/api/refine")
+@app.post("/api/refine/")
 def refine_plan(req: RefineRequest, request: Request) -> dict:
     """Update an existing plan from a chat message; numbers are recomputed by rules."""
     _check_rate(request.client.host if request.client else "unknown")
@@ -75,6 +77,8 @@ def refine_plan(req: RefineRequest, request: Request) -> dict:
 
 
 @app.get("/api/health")
+@app.get("/api/health/")
+@app.get("/health")
 def health() -> dict:
     return {"status": "ok"}
 
