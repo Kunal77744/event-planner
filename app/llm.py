@@ -42,5 +42,7 @@ def get_ideas(event_type, guests, budget, city, event_date, prefs) -> dict:
             raise ValueError("empty ideas")
         return {"ideas": ideas, "tips": tips, "source": "gemini"}
     except Exception as exc:  # network, quota, bad JSON: degrade gracefully
-        log.warning("Gemini failed (%s); using fallback", type(exc).__name__)
-        return fallback_ideas(event_type, city, prefs)
+        log.warning("Gemini failed (%s: %s); using fallback", type(exc).__name__, exc)
+        fb = fallback_ideas(event_type, city, prefs)
+        fb["gemini_error"] = f"{type(exc).__name__}: {str(exc)[:150]}"
+        return fb

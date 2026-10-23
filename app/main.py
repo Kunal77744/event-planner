@@ -83,6 +83,14 @@ def health() -> dict:
     return {"status": "ok"}
 
 
+@app.get("/api/env-check")
+def env_check() -> dict:
+    import os
+    k = os.getenv("GEMINI_API_KEY")
+    return {"has_key": bool(k), "length": len(k) if k else 0}
+
+
+
 @app.get("/")
 def index():
     p = PUBLIC / "index.html"
