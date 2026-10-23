@@ -16,7 +16,7 @@ from .planner import build_plan  # noqa: E402
 from .refine import apply_message  # noqa: E402
 from .schemas import PlanRequest  # noqa: E402
 
-STATIC = Path(__file__).resolve().parent.parent / "static"
+PUBLIC = Path(__file__).resolve().parent.parent / "public"
 app = FastAPI(title="Celebration & Event Planner")
 
 RATE_LIMIT, WINDOW = 20, 60  # requests per window (seconds) per client
@@ -81,7 +81,18 @@ def health() -> dict:
 
 @app.get("/")
 def index() -> FileResponse:
-    return FileResponse(STATIC / "index.html")
+    return FileResponse(PUBLIC / "index.html")
 
 
-app.mount("/static", StaticFiles(directory=STATIC), name="static")
+@app.get("/index.html")
+def index_html() -> FileResponse:
+    return FileResponse(PUBLIC / "index.html")
+
+
+@app.get("/app.js")
+def app_js() -> FileResponse:
+    return FileResponse(PUBLIC / "app.js")
+
+
+app.mount("/public", StaticFiles(directory=PUBLIC), name="public")
+
