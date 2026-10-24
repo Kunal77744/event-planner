@@ -4,9 +4,11 @@ Numbers are always recomputed by the rule engine (planner.py); this module only
 interprets what the user asked for. Unmatched messages become preferences, which
 personalise the Gemini ideas.
 """
+
 from __future__ import annotations
 
 import re
+from typing import Any
 
 from .schemas import PlanRequest, clean_text
 
@@ -16,16 +18,32 @@ _UNITS = {"k": 1_000, "lakh": 100_000, "lac": 100_000, "crore": 10_000_000}
 
 
 def _amount(text: str) -> float | None:
+    """Parse absolute currency amounts from natural language text.
+
+    Args:
+        text: Input string snippet following a budget mention.
+
+    Returns:
+        Numeric float in INR if parsed, None otherwise.
+    """
     m = re.search(r"(\d+(?:\.\d+)?)\s*(lakh|lac|crore|k)?\b", text)
     if not m:
         return None
     return float(m.group(1)) * _UNITS.get(m.group(2) or "", 1)
 
 
-def apply_message(req: PlanRequest, message: str) -> tuple[dict, list[str]]:
-    """Return (updated request fields, human-readable list of changes)."""
+def apply_message(req: PlanRequest, message: str) -> tuple[dict[str, Any], list[str]]:
+    """Parse refinement request and produce updated parameters and change summary.
+
+    Args:
+        req: Current PlanRequest instance.
+        message: Conversational instruction from user.
+
+    Returns:
+        Tuple of (updated plan parameter dictionary, list of change descriptions).
+    """
     msg = clean_text(message).lower()
-    data = req.model_dump(mode="json")
+    data: dict[str, Any] = req.model_dump(mode="json")
     changes: list[str] = []
 
     if "budget" in msg:
@@ -40,7 +58,10 @@ def apply_message(req: PlanRequest, message: str) -> tuple[dict, list[str]]:
                 data["budget"] = round(amt)
                 changes.append(f"Budget set to Rs {round(amt):,}")
 
-    g = re.search(r"(\d+)\s*(?:guests?|people|log|mehman)|(?:guests?|people)\D{0,15}(\d+)", msg)
+    g = re.search(
+        r"(\d+)\s*(?:guests?|people|log|mehman)|(?:guests?|people)\D{0,15}(\d+)",
+        msg,
+    )
     if g:
         data["guests"] = int(g.group(1) or g.group(2))
         changes.append(f"Guests set to {data['guests']}")
