@@ -10,10 +10,10 @@ A GenAI planning assistant for weddings, birthdays and community events. Enter e
 |---|---|---|
 | Problem alignment | Budgets, timelines, vendor checklists and personalised ideas for 3 event types, plus a conversational refine step | `app/planner.py`, `app/llm.py`, `app/refine.py` |
 | Smart, context-based decisions | Budget split differs per event type; timeline compresses when the date is near (rush mode); per-guest budget warning; chat changes recompute every number by rules | `app/planner.py`, `app/refine.py` |
-| Code quality | Small single-purpose modules, strict mypy type checking, PEP 8 ruff linted and formatted, comprehensive docstrings, RateLimiter class, no magic numbers | `app/config.py`, `app/ratelimit.py`, `app/routes.py`, `app/main.py` |
+| Code quality | Strategy Pattern architecture for event domain models, small single-purpose modules, strict mypy type checking, PEP 8 ruff linted and formatted, comprehensive docstrings, RateLimiter class, no magic numbers | `app/config.py`, `app/planner.py`, `app/ratelimit.py`, `app/routes.py`, `app/main.py` |
 | Security | Key only in git-ignored `.env`; Pydantic limits on every field; markup stripped; user text wrapped as untrusted data in prompt; per-IP rate limit; CSP and security headers; UI uses `textContent` | `app/schemas.py`, `app/main.py`, `app/routes.py`, `app/llm.py`, `public/app.js` |
 | Efficiency | Rules run with no API call; Gemini JSON mode with LRU cache; graceful fallback if key is missing or call fails | `app/llm.py`, `app/planner.py` |
-| Testing | 29 pytest tests with 97% coverage (budget math, timeline, validation, sanitization, rate limit, headers, chat refinement, static routes) run in CI | `tests/`, `.github/workflows/ci.yml` |
+| Testing | 38 pytest tests with 100% coverage (budget math, timeline, validation, sanitization, rate limit, headers, chat refinement, static routes, Gemini integration and fallback) run in CI | `tests/`, `.github/workflows/ci.yml` |
 | Accessibility | Landmarks, labelled fields with hints, skip link, `aria-live` status, `role=alert` warnings, table captions and scoped headers, visible focus, dark mode, reduced motion, print styles | `public/index.html`, `public/app.js` |
 
 ## Project Structure
@@ -33,8 +33,9 @@ A GenAI planning assistant for weddings, birthdays and community events. Enter e
 ├── public/                 # Static frontend served directly by Vercel CDN
 │   ├── index.html          # Accessible UI with semantic markup
 │   └── app.js              # Client-side interaction logic
-├── tests/                  # 29 unit and integration tests (97% coverage)
+├── tests/                  # 38 unit and integration tests (100% coverage)
 │   ├── test_api.py         # Endpoints, security headers, rate limiting, static assets
+│   ├── test_llm.py         # Gemini integration, prompt isolation, graceful fallback
 │   ├── test_planner.py     # Budget breakdown, rush timeline, vendor checklist
 │   └── test_refine.py      # Conversational adjustment parsing and validation
 ├── pyproject.toml          # Ruff and mypy strict toolchain configuration

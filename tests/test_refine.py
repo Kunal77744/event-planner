@@ -76,3 +76,9 @@ def test_refine_rejects_invalid_result(monkeypatch: pytest.MonkeyPatch) -> None:
         json={"plan": base(budget=6000), "message": "reduce budget by 90%"},
     )
     assert r.status_code == 422
+
+
+def test_budget_mention_without_amount() -> None:
+    """Verify conversational message mentioning budget without amount falls into preferences."""
+    data, _ = apply_message(PlanRequest(**base()), "focus on budget optimization")
+    assert "budget optimization" in data["preferences"]

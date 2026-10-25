@@ -45,3 +45,42 @@ def test_vendor_lists_nonempty() -> None:
     """Verify all event types provide non-empty vendor checklists."""
     for e in planner.VENDORS:
         assert planner.vendor_checklist(e)
+
+
+def test_strategies_properties() -> None:
+    """Verify concrete strategy properties and event types."""
+    for etype in planner.EventType:
+        strat = planner.get_strategy(etype)
+        assert strat.event_type == etype
+        assert strat.min_per_guest > 0
+        assert len(strat.tasks) > 0
+        assert len(strat.vendors) > 0
+        assert len(strat.base_ideas) > 0
+
+
+def test_get_strategy_invalid() -> None:
+    """Verify KeyError is raised for unsupported event type."""
+    with pytest.raises(KeyError, match="Unsupported event type"):
+        planner.get_strategy("conference")
+
+
+def test_fallback_ideas_with_and_without_prefs() -> None:
+    """Verify fallback_ideas output format and preference incorporation."""
+    res1 = planner.fallback_ideas("birthday", "Mumbai", "")
+    assert res1["source"] == "built-in"
+    assert len(res1["ideas"]) >= 3
+    assert len(res1["tips"]) == 2
+
+    res2 = planner.fallback_ideas("community", "Delhi", "Eco-friendly theme")
+    assert any("Eco-friendly" in idea for idea in res2["ideas"])
+
+
+def test_build_plan_consolidated() -> None:
+    """Verify build_plan combines budget, timeline, and vendors accurately."""
+    res = planner.build_plan("wedding", 100, 500_000, date.today() + timedelta(days=60))
+    assert "budget" in res
+    assert "timeline" in res
+    assert "vendors" in res
+    assert res["budget"]["per_guest"] == 5000
+    assert len(res["timeline"]["steps"]) > 0
+    assert len(res["vendors"]) > 0
